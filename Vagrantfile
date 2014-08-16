@@ -9,6 +9,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "precise64"
   config.vm.box_url = "file:///Users/hess/Projects/boxes/precise64.box"
 
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+
+  config.vm.provision :shell, :inline => "echo \"America/Chicago\" | sudo tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata"
+
+  config.vm.provision :shell, :path => "bootstrap.sh"
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
