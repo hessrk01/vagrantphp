@@ -18,7 +18,24 @@ sudo apt-get update
 #Apache stuff
 sudo a2enmod rewrite
 
+echo "*************************************************************"
+echo "APACHE USR GROUP SETUP"
+echo "*************************************************************"
+
 rm -rf /var/www
 ln -fs /vagrant /var/www
+    
+#APACHEUSR=`grep -c 'APACHE_RUN_USER=www-data' /etc/apache2/envvars`
+#APACHEGRP=`grep -c 'APACHE_RUN_GROUP=www-data' /etc/apache2/envvars`
+#if [ APACHEUSR ]; then
+sudo sed -i 's/APACHE_RUN_USER=www-data/APACHE_RUN_USER=vagrant/g' /etc/apache2/envvars
+#fi
+#if [ APACHEGRP ]; then
+sudo sed -i 's/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=vagrant/g' /etc/apache2/envvars
+#fi
+
+sudo sed -i 's_/var/www/html_/var/www/public_g' /etc/apache2/sites-available/000-default.conf
+
+sudo chown -R vagrant:www-data /var/lock/apache2
 
 sudo service apache2 restart
