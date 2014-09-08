@@ -18,6 +18,24 @@ sudo apt-get update
 #Apache stuff
 sudo a2enmod rewrite
 
+sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
+sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
+sudo apt-get install -y mysql-server 2> /dev/null
+sudo apt-get install -y mysql-client 2> /dev/null
+
+if [ ! -f /var/log/dbinstalled ];
+then
+    echo "CREATE USER 'mysqluser'@'localhost' IDENTIFIED BY 'USERPASSWORD'" | mysql -uroot -proot
+    echo "CREATE DATABASE internal" | mysql -uroot -proot
+    echo "GRANT ALL ON internal.* TO 'mysqluser'@'localhost'" | mysql -uroot -proot
+    echo "flush privileges" | mysql -uroot -proot
+    touch /var/log/dbinstalled
+    if [ -f /vagrant/data/initial.sql ];
+    then
+        mysql -uroot -proot internal < /vagrant/data/initial.sql
+    fi
+fi
+
 echo "*************************************************************"
 echo "APACHE USR GROUP SETUP"
 echo "*************************************************************"
