@@ -22,8 +22,8 @@ echo "*************************************************************"
 echo "APACHE USR GROUP SETUP"
 echo "*************************************************************"
 
-rm -rf /var/www
-ln -fs /vagrant /var/www
+    rm -rf /var/www
+    ln -fs /vagrant /var/www
     
 #APACHEUSR=`grep -c 'APACHE_RUN_USER=www-data' /etc/apache2/envvars`
 #APACHEGRP=`grep -c 'APACHE_RUN_GROUP=www-data' /etc/apache2/envvars`
@@ -36,6 +36,24 @@ sudo sed -i 's/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=vagrant/g' /etc/apache
 
 sudo sed -i 's_/var/www/html_/var/www/public_g' /etc/apache2/sites-available/000-default.conf
 
+#comment out these two line numbers
+#sudo sed -i'' '165,165 s/^/#/' /etc/apache2/apache2.conf 
+#sudo sed -i'' '167,167 s/^/#/' /etc/apache2/apache2.conf 
+
+sudo sed -i 's_AllowOverride None_AllowOverride All_g' /etc/apache2/apache2.conf
+
+
 sudo chown -R vagrant:www-data /var/lock/apache2
+	
+# if /var/www is not a symlink then create the symlink and set up apache
+#if [ ! -h /var/www ];
+#then
+#    rm -rf /var/www
+#    ln -fs /vagrant /var/www
+#    sudo a2enmod rewrite 2> /dev/null
+#    sed -i '/AllowOverride None/c AllowOverride All' /etc/apache2/sites-available/default
+    #sudo service apache2 restart 2> /dev/null
+#fi
+
 
 sudo service apache2 restart
